@@ -3,7 +3,7 @@ import { useAdminStore } from '@/store/useAdminStore';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Tags, Layers, Package, Image as ImageIcon, LogOut } from 'lucide-react';
+import { LayoutDashboard, Tags, Layers, Package, Image as ImageIcon, LogOut, Settings } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -47,6 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Subcategories', href: '/admin/subcategories', icon: Layers },
     { name: 'Products', href: '/admin/products', icon: Package },
     { name: 'Sliders', href: '/admin/sliders', icon: ImageIcon },
+    { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
   return (
