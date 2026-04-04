@@ -4,16 +4,18 @@ import { useParams } from 'next/navigation';
 import api from '@/lib/axios';
 import Link from 'next/link';
 import { Package, MessageCircle, Mail, ArrowLeft } from 'lucide-react';
+import { useSettingsStore } from '@/store/useSettingsStore';
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const { settings, fetchSettings } = useSettingsStore();
 
-  // Constants that could be env vars
-  const WA_NUMBER = "1234567890"; // Replace with real number
-  const CONTACT_EMAIL = "sales@catalogapp.com"; // Replace
+  useEffect(() => {
+    if (!settings) fetchSettings();
+  }, [settings, fetchSettings]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -59,14 +61,29 @@ export default function ProductDetailPage() {
   }
 
   const handleWhatsApp = () => {
-    const msg = `Hello, I'm interested in your product: ${product.name} (SKU: ${product.sku || 'N/A'}).`;
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    let rawNumber = settings?.whatsappNumber || settings?.contact?.phone || "1234567890";
+    // WhatsApp format works best with just digits. Remove space, hyphen, plus chars.
+    const waNumber = rawNumber.replace(/[^0-9]/g, '');
+
+    let msg = settings?.whatsappMessage || `Hello, I'm interested in your product: {product_name} (SKU: {product_sku}).`;
+    
+    // Replace placeholders
+    msg = msg.replace(/{product_name}/g, product.name);
+    msg = msg.replace(/{product_sku}/g, product.sku || 'N/A');
+
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   const handleEmail = () => {
+    const email = settings?.inquiryEmail || settings?.contact?.email || "sales@catalogapp.com";
     const subject = `Inquiry: ${product.name}`;
-    const body = `Hello,\n\nI would like more information about the following product:\n\nName: ${product.name}\nSKU: ${product.sku || 'N/A'}\n\nPlease let me know about availability and pricing.\n\nThank you.`;
-    window.open(`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    let body = settings?.emailMessage || `Hello,\n\nI would like more information about the following product:\n\nName: {product_name}\nSKU: {product_sku}\n\nPlease let me know about availability and pricing.\n\nThank you.`;
+
+    // Replace placeholders
+    body = body.replace(/{product_name}/g, product.name);
+    body = body.replace(/{product_sku}/g, product.sku || 'N/A');
+
+    window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
   };
 
   return (

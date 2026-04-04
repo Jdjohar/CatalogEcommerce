@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/axios';
 import { Mail, Phone, MapPin, Globe, MessageCircle, Share2 } from 'lucide-react';
+import { useSettingsStore } from '@/store/useSettingsStore';
 
 const Facebook = ({ size = 24 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -16,30 +17,29 @@ const Twitter = ({ size = 24 }: { size?: number }) => (
 
 export default function Footer() {
   const [categories, setCategories] = useState<any[]>([]);
-  const [settings, setSettings] = useState<any>({
-    contact: { address: '123 Commerce Blvd, Tech City, ST 12345', phone: '+1 (234) 567-890', email: 'info@catalogapp.com' },
-    socialLinks: { facebook: '#', twitter: '#', instagram: '#' }
-  });
+  const { settings, fetchSettings } = useSettingsStore();
   
   useEffect(() => {
     const fetchFooterData = async () => {
       try {
-        const [catsRes, setsRes] = await Promise.all([
-          api.get('/categories'),
-          api.get('/settings')
-        ]);
+        const catsRes = await api.get('/categories');
         if (catsRes.data) {
           setCategories(catsRes.data.filter((c:any) => c.active).slice(0, 4));
         }
-        if (setsRes.data) {
-          setSettings(setsRes.data);
-        }
       } catch (err) {
-        console.error('Failed to load footer data', err);
+        console.error('Failed to load footer categories', err);
       }
     };
     fetchFooterData();
-  }, []);
+    if (!settings) {
+      fetchSettings();
+    }
+  }, [settings, fetchSettings]);
+
+  // Use fallback values if settings haven't loaded yet
+  const contact = settings?.contact || { address: '123 Commerce Blvd, Tech City, ST 12345', phone: '+1 (234) 567-890', email: 'info@catalogapp.com' };
+  const socialLinks = settings?.socialLinks || { facebook: '#', twitter: '#', instagram: '#' };
+
 
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-8 border-t border-gray-800 mt-auto">
@@ -47,14 +47,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
 
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold tracking-tight text-white mb-6">Reet Jewellers 916</h3>
+            {settings?.logo?.url ? (
+              <img src={settings.logo.url} alt="Site Logo" className="h-12 object-contain bg-white rounded-lg p-2 mb-6" />
+            ) : (
+              <h3 className="text-2xl font-bold tracking-tight text-white mb-6">Reet Jewellers 916</h3>
+            )}
             <p className="text-gray-400 leading-relaxed text-sm">
-              Your premium destination for the best products. Quality, trust, and excellence delivered daily.
+              {settings?.aboutUs || 'Your premium destination for the best products. Quality, trust, and excellence delivered daily.'}
             </p>
             <div className="flex space-x-4 pt-2">
-              <a href={settings.socialLinks?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all"><Facebook size={18} /></a>
-              <a href={settings.socialLinks?.instagram || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all"><Instagram size={18} /></a>
-              <a href={settings.socialLinks?.twitter || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-sky-500 hover:text-white transition-all"><Twitter size={18} /></a>
+              <a href={socialLinks?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all"><Facebook size={18} /></a>
+              <a href={socialLinks?.instagram || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all"><Instagram size={18} /></a>
+              <a href={socialLinks?.twitter || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-sky-500 hover:text-white transition-all"><Twitter size={18} /></a>
             </div>
           </div>
 
@@ -92,15 +96,15 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start space-x-3 text-sm text-gray-400">
                 <MapPin size={18} className="text-blue-500 mt-0.5 shrink-0" />
-                <span>{settings.contact?.address || 'Address not listed'}</span>
+                <span>{contact?.address || 'Address not listed'}</span>
               </li>
               <li className="flex items-center space-x-3 text-sm text-gray-400">
                 <Phone size={18} className="text-blue-500 shrink-0" />
-                <a href={`tel:${settings.contact?.phone}`} className="hover:text-white transition-colors">{settings.contact?.phone || 'Phone not listed'}</a>
+                <a href={`tel:${contact?.phone}`} className="hover:text-white transition-colors">{contact?.phone || 'Phone not listed'}</a>
               </li>
               <li className="flex items-center space-x-3 text-sm text-gray-400">
                 <Mail size={18} className="text-blue-500 shrink-0" />
-                <a href={`mailto:${settings.contact?.email}`} className="hover:text-white transition-colors">{settings.contact?.email || 'Email not listed'}</a>
+                <a href={`mailto:${contact?.email}`} className="hover:text-white transition-colors">{contact?.email || 'Email not listed'}</a>
               </li>
             </ul>
           </div>

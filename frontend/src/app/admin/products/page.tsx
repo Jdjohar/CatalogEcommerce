@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/axios';
 import toast from 'react-hot-toast';
-import { Plus, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Image as ImageIcon, Wand2 } from 'lucide-react';
 
 interface Product {
   _id: string;
@@ -36,6 +36,12 @@ export default function Products() {
     active: true, featured: false
   });
   const [images, setImages] = useState<FileList | null>(null);
+
+  // Poster Demo State
+  const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
+  const [posterUrl, setPosterUrl] = useState<string | null>(null);
+  const [posterGenerating, setPosterGenerating] = useState<string | null>(null); // productId if generating
+  const [posterError, setPosterError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
@@ -149,6 +155,24 @@ export default function Products() {
     }
   };
 
+  const handleGeneratePoster = async (productId: string) => {
+    setPosterGenerating(productId);
+    setPosterUrl(null);
+    setPosterError(null);
+    setIsPosterModalOpen(true);
+    
+    try {
+      const res = await api.post(`/products/${productId}/generate-poster`);
+      setPosterUrl(res.data.posterUrl);
+      toast.success('AI Poster generated successfully!');
+    } catch (err: any) {
+      setPosterError(err.response?.data?.message || 'Failed to generate poster');
+      toast.error('Poster generation failed');
+    } finally {
+      setPosterGenerating(null);
+    }
+  };
+
   if (loading) return <div className="text-gray-500">Loading products...</div>;
 
   const currentProductInfo = products.find(p => p._id === editingId);
@@ -212,7 +236,8 @@ export default function Products() {
                     {product.active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right space-x-2">
+                <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                  <button onClick={() => handleGeneratePoster(product._id)} className="p-1.5 text-purple-600 hover:bg-purple-50 rounded transition" title="Generate AI Poster"><Wand2 size={18} /></button>
                   <button onClick={() => openModal(product)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition"><Edit2 size={18} /></button>
                   <button onClick={() => handleDelete(product._id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition"><Trash2 size={18} /></button>
                 </td>
@@ -312,6 +337,44 @@ export default function Products() {
                 <button type="submit" className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">{editingId ? 'Save Changes' : 'Create Product'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Demo Poster Modal */}
+      {isPosterModalOpen && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white flex justify-between items-center">
+              <h2 className="text-lg font-bold flex items-center"><Wand2 className="mr-2" size={20} /> AI Poster Studio</h2>
+              <button onClick={() => setIsPosterModalOpen(false)} className="text-white hover:text-gray-200"><X size={20} /></button>
+            </div>
+            
+            <div className="p-8 flex flex-col items-center justify-center bg-gray-50 flex-1 overflow-y-auto">
+              {posterGenerating ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                  <h3 className="text-lg font-medium text-gray-900">Generating Poster...</h3>
+                  <p className="text-sm text-gray-500 mt-2">Writing prompt and calling AI... this can take 10-15 seconds.</p>
+                </div>
+              ) : posterError ? (
+                <div className="text-center py-12">
+                  <div className="text-red-500 mb-4 bg-red-50 p-4 rounded-full inline-block">
+                    <X size={32} />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Generation Failed</h3>
+                  <p className="text-sm text-gray-600 bg-gray-100 p-4 rounded-lg text-left font-mono">{posterError}</p>
+                  <button onClick={() => setIsPosterModalOpen(false)} className="mt-6 px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition">Close</button>
+                </div>
+              ) : posterUrl ? (
+                <div className="w-full text-center">
+                  <img src={posterUrl} alt="Generated Poster" className="w-full aspect-square object-cover rounded-lg shadow-md border border-gray-200" />
+                  <a href={posterUrl} target="_blank" rel="noopener noreferrer" className="mt-6 w-full inline-block px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition">
+                    Download Poster
+                  </a>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       )}

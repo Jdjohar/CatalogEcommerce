@@ -24,6 +24,7 @@ interface Category {
   _id: string;
   name: string;
   slug: string;
+  image?: { url: string; public_id: string };
   active: boolean;
   order: number;
 }
@@ -38,6 +39,11 @@ const SortableItem = ({ category, onEdit, onDelete, onToggle }: any) => {
         <button {...attributes} {...listeners} className="cursor-grab hover:text-blue-600 text-gray-400">
           <GripVertical size={20} />
         </button>
+        {category.image?.url ? (
+          <img src={category.image.url} alt={category.name} className="w-12 h-12 object-cover rounded-lg shadow-sm border border-gray-100" />
+        ) : (
+          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs font-semibold">No Img</div>
+        )}
         <div>
           <h3 className="font-semibold text-gray-800">{category.name}</h3>
           <p className="text-sm text-gray-500">/{category.slug}</p>
@@ -67,7 +73,7 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState({ name: '', active: true });
+  const [formData, setFormData] = useState<{ name: string; active: boolean; image: File | null }>({ name: '', active: true, image: null });
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -107,11 +113,18 @@ export default function Categories() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('active', formData.active.toString());
+      if (formData.image) {
+        data.append('image', formData.image);
+      }
+
       if (editingCategory) {
-        await api.put(`/categories/${editingCategory._id}`, formData);
+        await api.put(`/categories/${editingCategory._id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
         toast.success('Category updated');
       } else {
-        await api.post('/categories', formData);
+        await api.post('/categories', data, { headers: { 'Content-Type': 'multipart/form-data' } });
         toast.success('Category created');
       }
       setIsModalOpen(false);
@@ -145,10 +158,10 @@ export default function Categories() {
   const openModal = (category?: Category) => {
     if (category) {
       setEditingCategory(category);
-      setFormData({ name: category.name, active: category.active });
+      setFormData({ name: category.name, active: category.active, image: null });
     } else {
       setEditingCategory(null);
-      setFormData({ name: '', active: true });
+      setFormData({ name: '', active: true, image: null });
     }
     setIsModalOpen(true);
   };
@@ -199,6 +212,20 @@ export default function Categories() {
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                     placeholder="e.g. Electronics"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category Image</label>
+                  {editingCategory && editingCategory.image?.url && (
+                    <div className="mb-2">
+                      <img src={editingCategory.image.url} alt={editingCategory.name} className="h-16 w-16 object-cover rounded-lg border border-gray-200" />
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={e => setFormData({ ...formData, image: e.target.files?.[0] || null })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
                   />
                 </div>
                 <div className="flex items-center space-x-3 mt-4">

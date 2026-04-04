@@ -1,10 +1,18 @@
 'use client';
 import Link from 'next/link';
 import { ShoppingBag, Search, Menu } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSettingsStore } from '@/store/useSettingsStore';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { settings, fetchSettings } = useSettingsStore();
+
+  useEffect(() => {
+    if (!settings) {
+      fetchSettings();
+    }
+  }, [settings, fetchSettings]);
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-40">
@@ -12,8 +20,14 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 text-blue-600">
-              <ShoppingBag size={28} />
-              <span className="font-bold text-xl tracking-tight text-gray-900">Reet Jewellers 916</span>
+              {settings?.logo?.url ? (
+                <img src={settings.logo.url} alt="Site Logo" className="h-10 object-contain" />
+              ) : (
+                <>
+                  <ShoppingBag size={28} />
+                  <span className="font-bold text-xl tracking-tight text-gray-900">Reet Jewellers 916</span>
+                </>
+              )}
             </Link>
           </div>
 
@@ -24,7 +38,7 @@ export default function Navbar() {
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-gray-50 placeholder-gray-700 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
                 placeholder="Search products..."
               />
             </div>
@@ -54,7 +68,7 @@ export default function Navbar() {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-700 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:text-sm"
               placeholder="Search products..."
             />
           </div>

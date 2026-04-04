@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 const slugify = require('slugify');
+const cloudinary = require('../config/cloudinary');
 
 exports.getAllCategories = async (req, res) => {
   try {
@@ -23,7 +24,15 @@ exports.createCategory = async (req, res) => {
 
     const order = await Category.countDocuments();
 
-    const category = new Category({ name, slug, active, order });
+    let image = {};
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      let dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
+      const result = await cloudinary.uploader.upload(dataURI, { folder: 'categories' });
+      image = { url: result.secure_url, public_id: result.public_id };
+    }
+
+    const category = new Category({ name, slug, active, order, image: image.url ? image : undefined });
     await category.save();
 
     res.status(201).json(category);
@@ -37,11 +46,18 @@ exports.updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, active } = req.body;
     
-    const updateData = { active };
+    const updateData = { active: active === 'true' || active === true };
     if (name) {
       updateData.name = name;
       updateData.slug = slugify(name, { lower: true, strict: true });
       // In real-world, might need to ensure slug uniqueness again
+    }
+
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      let dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
+      const result = await cloudinary.uploader.upload(dataURI, { folder: 'categories' });
+      updateData.image = { url: result.secure_url, public_id: result.public_id };
     }
 
     const category = await Category.findByIdAndUpdate(id, updateData, { new: true });
@@ -59,6 +75,10 @@ exports.deleteCategory = async (req, res) => {
     const category = await Category.findByIdAndDelete(id);
     if (!category) return res.status(404).json({ message: 'Category not found' });
     
+    if (category.image && category.image.public_id) {
+      await cloudinary.uploader.destroy(category.image.public_id);
+    }
+
     // Should also delete related subcategories/products or handle cascading
     res.json({ message: 'Category deleted successfully' });
   } catch (err) {

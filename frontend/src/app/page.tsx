@@ -118,11 +118,17 @@ export default function Home() {
             Array(4).fill(0).map((_, i) => <CategorySkeleton key={i} />)
           ) : (
             categories.map(category => (
-              <Link key={category._id} href={`/categories/${category.slug}`} className="group bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-lg transition-all text-center flex flex-col items-center hover:-translate-y-1">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-                  <span className="text-blue-600 font-bold text-xl group-hover:text-white">{category.name.charAt(0)}</span>
+              <Link key={category._id} href={`/categories/${category.slug}`} className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col hover:-translate-y-1">
+                <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center">
+                  {category.image?.url ? (
+                    <img src={category.image.url} alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                     <span className="text-gray-300 font-bold text-5xl group-hover:text-gray-400 transition-colors">{category.name.charAt(0)}</span>
+                  )}
                 </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{category.name}</h3>
+                <div className="p-5 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="font-bold text-lg text-gray-900 group-hover:text-blue-600 transition-colors">{category.name}</h3>
+                </div>
               </Link>
             ))
           )}

@@ -36,14 +36,22 @@ export default function CategoriesPage() {
             Array(8).fill(0).map((_, i) => <CategorySkeleton key={i} />)
           ) : (
             categories.map(category => (
-              <Link key={category._id} href={`/categories/${category.slug}`} className="group bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-all flex flex-col items-center justify-center hover:-translate-y-1">
-                <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
-                  <span className="text-blue-600 font-bold text-3xl group-hover:text-white transition-colors">{category.name.charAt(0)}</span>
+              <Link key={category._id} href={`/categories/${category.slug}`} className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col hover:-translate-y-1">
+                <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center">
+                  {category.image?.url ? (
+                    <img src={category.image.url} alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <span className="text-gray-300 font-bold text-6xl group-hover:text-gray-400 transition-colors">{category.name.charAt(0)}</span>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/60 to-transparent flex justify-center">
+                    <span className="bg-white text-gray-900 rounded-full px-4 py-2 text-sm font-semibold flex items-center shadow-md transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                      Explore Category <ArrowRight size={16} className="ml-2" />
+                    </span>
+                  </div>
                 </div>
-                <h3 className="font-bold text-lg text-gray-900 group-hover:text-blue-600 transition-colors text-center">{category.name}</h3>
-                <span className="mt-4 flex items-center text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0">
-                  Explore <ArrowRight size={16} className="ml-1" />
-                </span>
+                <div className="p-6 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors">{category.name}</h3>
+                </div>
               </Link>
             ))
           )}
