@@ -66,7 +66,7 @@ export default function ProductDetailPage() {
     const waNumber = rawNumber.replace(/[^0-9]/g, '');
 
     let msg = settings?.whatsappMessage || `Hello, I'm interested in your product: {product_name} (SKU: {product_sku}).`;
-    
+
     // Replace placeholders
     msg = msg.replace(/{product_name}/g, product.name);
     msg = msg.replace(/{product_sku}/g, product.sku || 'N/A');
@@ -75,7 +75,7 @@ export default function ProductDetailPage() {
   };
 
   const handleEmail = () => {
-    const email = settings?.inquiryEmail || settings?.contact?.email || "sales@catalogapp.com";
+    const email = settings?.inquiryEmail || settings?.contact?.email || "sales@Reet Jewelers 916.com";
     const subject = `Inquiry: ${product.name}`;
     let body = settings?.emailMessage || `Hello,\n\nI would like more information about the following product:\n\nName: {product_name}\nSKU: {product_sku}\n\nPlease let me know about availability and pricing.\n\nThank you.`;
 
@@ -89,13 +89,13 @@ export default function ProductDetailPage() {
   return (
     <div className="bg-white min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <Link href={`/categories/${product.category?.slug}`} className="inline-flex items-center text-gray-500 hover:text-blue-600 mb-8 transition-colors">
           <ArrowLeft size={18} className="mr-2" /> Back to {product.category?.name || 'Category'}
         </Link>
 
         <div className="flex flex-col md:flex-row gap-12 lg:gap-20">
-          
+
           {/* Image Gallery */}
           <div className="w-full md:w-1/2">
             <div className="aspect-square bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 flex items-center justify-center">
@@ -105,13 +105,13 @@ export default function ProductDetailPage() {
                 <Package size={100} className="text-gray-200" />
               )}
             </div>
-            
+
             {/* Thumbnails */}
             {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 md:grid-cols-5 gap-4 mt-6">
                 {product.images.map((img: any, idx: number) => (
-                  <button 
-                    key={idx} 
+                  <button
+                    key={idx}
                     onClick={() => setActiveImageIdx(idx)}
                     className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${idx === activeImageIdx ? 'border-blue-600 ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300'}`}
                   >
@@ -133,9 +133,9 @@ export default function ProductDetailPage() {
                 </>
               )}
             </div>
-            
+
             <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">{product.name}</h1>
-            
+
             {product.sku && (
               <p className="text-sm text-gray-500 font-medium mb-6">SKU: {product.sku}</p>
             )}
@@ -155,13 +155,13 @@ export default function ProductDetailPage() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-              <button 
+              <button
                 onClick={handleWhatsApp}
                 className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-transform hover:scale-105 shadow-lg shadow-green-500/30"
               >
                 <MessageCircle className="mr-3" size={24} /> Enquire on WhatsApp
               </button>
-              <button 
+              <button
                 onClick={handleEmail}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center transition-transform hover:scale-105 shadow-lg shadow-blue-600/30"
               >

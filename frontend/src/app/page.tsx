@@ -21,10 +21,10 @@ export default function Home() {
           api.get('/categories'),
           api.get('/products')
         ]);
-        
-        setSliders(slidersRes.data.filter((s:any) => s.active));
-        setCategories(catsRes.data.filter((c:any) => c.active).slice(0, 8)); // Top 8
-        setFeaturedProducts(prodsRes.data.filter((p:any) => p.active && p.featured).slice(0, 8));
+
+        setSliders(slidersRes.data.filter((s: any) => s.active));
+        setCategories(catsRes.data.filter((c: any) => c.active).slice(0, 8)); // Top 8
+        setFeaturedProducts(prodsRes.data.filter((p: any) => p.active && p.featured).slice(0, 8));
       } catch (err) {
         console.error('Error fetching home data', err);
       } finally {
@@ -45,7 +45,7 @@ export default function Home() {
 
   return (
     <div className="bg-gray-50 flex-col min-h-screen">
-      
+
       {/* Hero Slider */}
       <section className="relative w-full h-[60vh] md:h-[80vh] bg-gray-900 overflow-hidden">
         {loading ? (
@@ -75,7 +75,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            
+
             {/* Slider Controls */}
             {sliders.length > 1 && (
               <>
@@ -95,7 +95,7 @@ export default function Home() {
           </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-white">
-            <h1 className="text-4xl font-bold mb-4">Welcome to CatalogApp</h1>
+            <h1 className="text-4xl font-bold mb-4">Welcome to Reet Jewelers 916</h1>
             <p className="text-xl text-gray-400">Premium products await</p>
           </div>
         )}
@@ -123,7 +123,7 @@ export default function Home() {
                   {category.image?.url ? (
                     <img src={category.image.url} alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                     <span className="text-gray-300 font-bold text-5xl group-hover:text-gray-400 transition-colors">{category.name.charAt(0)}</span>
+                    <span className="text-gray-300 font-bold text-5xl group-hover:text-gray-400 transition-colors">{category.name.charAt(0)}</span>
                   )}
                 </div>
                 <div className="p-5 text-center flex-1 flex flex-col justify-center">
@@ -163,15 +163,16 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Global simple animations */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes fade-in-up {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-      `}}/>
+      `}} />
     </div>
   );
 }

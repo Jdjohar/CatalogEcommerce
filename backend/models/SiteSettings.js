@@ -17,7 +17,7 @@ const siteSettingsSchema = new mongoose.Schema({
   contact: {
     address: { type: String, default: '123 Commerce Blvd, Tech City, ST 12345' },
     phone: { type: String, default: '+1 (234) 567-890' },
-    email: { type: String, default: 'info@catalogapp.com' }
+    email: { type: String, default: 'info@Reet Jewelers 916.com' }
   },
   socialLinks: {
     facebook: { type: String, default: '#' },

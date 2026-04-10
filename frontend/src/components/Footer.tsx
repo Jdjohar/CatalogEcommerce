@@ -37,7 +37,7 @@ export default function Footer() {
   }, [settings, fetchSettings]);
 
   // Use fallback values if settings haven't loaded yet
-  const contact = settings?.contact || { address: '123 Commerce Blvd, Tech City, ST 12345', phone: '+1 (234) 567-890', email: 'info@catalogapp.com' };
+  const contact = settings?.contact || { address: '123 Commerce Blvd, Tech City, ST 12345', phone: '+1 (234) 567-890', email: 'info@Reet Jewelers 916.com' };
   const socialLinks = settings?.socialLinks || { facebook: '#', twitter: '#', instagram: '#' };
 
 
@@ -111,7 +111,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">&copy; {new Date().getFullYear()} CatalogApp. All rights reserved.</p>
+          <p className="text-gray-500 text-sm">&copy; {new Date().getFullYear()} Reet Jewelers 916. All rights reserved. Design with love <a href="https://jdwebservices.com" target="_blank" rel="noopener noreferrer">JD Web Services</a></p>
           <div className="flex space-x-4 flex-wrap mt-4 md:mt-0 text-sm text-gray-500">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <span>|</span>
