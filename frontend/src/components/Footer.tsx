@@ -11,8 +11,8 @@ const Facebook = ({ size = 24 }: { size?: number }) => (
 const Instagram = ({ size = 24 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
 );
-const Twitter = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
+const Tiktok = ({ size = 24 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>
 );
 
 export default function Footer() {
@@ -38,7 +38,7 @@ export default function Footer() {
 
   // Use fallback values if settings haven't loaded yet
   const contact = settings?.contact || { address: '123 Commerce Blvd, Tech City, ST 12345', phone: '+1 (234) 567-890', email: 'info@Reet Jewelers 916.com' };
-  const socialLinks = settings?.socialLinks || { facebook: '#', twitter: '#', instagram: '#' };
+  const socialLinks = settings?.socialLinks || { facebook: '#', tiktok: '#', twitter: '#', instagram: '#' };
 
 
   return (
@@ -58,7 +58,7 @@ export default function Footer() {
             <div className="flex space-x-4 pt-2">
               <a href={socialLinks?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all"><Facebook size={18} /></a>
               <a href={socialLinks?.instagram || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all"><Instagram size={18} /></a>
-              <a href={socialLinks?.twitter || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-sky-500 hover:text-white transition-all"><Twitter size={18} /></a>
+              <a href={socialLinks?.tiktok || socialLinks?.twitter || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all"><Tiktok size={18} /></a>
             </div>
           </div>
 

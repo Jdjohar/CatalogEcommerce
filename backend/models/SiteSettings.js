@@ -21,6 +21,7 @@ const siteSettingsSchema = new mongoose.Schema({
   },
   socialLinks: {
     facebook: { type: String, default: '#' },
+    tiktok: { type: String, default: '#' },
     twitter: { type: String, default: '#' },
     instagram: { type: String, default: '#' }
   }

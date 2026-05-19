@@ -17,6 +17,7 @@ interface SiteSettings {
   socialLinks?: {
     facebook?: string;
     twitter?: string;
+    tiktok?: string;
     instagram?: string;
   };
 }

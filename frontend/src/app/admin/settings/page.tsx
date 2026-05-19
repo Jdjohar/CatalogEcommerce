@@ -17,7 +17,7 @@ export default function SettingsPage() {
     emailMessage: '',
     openaiApiKey: '',
     contact: { address: '', phone: '', email: '' },
-    socialLinks: { facebook: '', twitter: '', instagram: '' }
+    socialLinks: { facebook: '', tiktok: '', twitter: '', instagram: '' }
   });
 
   useEffect(() => {
@@ -248,12 +248,12 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Twitter/X URL</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">TikTok URL</label>
               <input
                 type="url"
                 className="w-full p-2 border rounded-md"
-                value={settings.socialLinks?.twitter || ''}
-                onChange={(e) => handleChange('socialLinks', 'twitter', e.target.value)}
+                value={settings.socialLinks?.tiktok || ''}
+                onChange={(e) => handleChange('socialLinks', 'tiktok', e.target.value)}
               />
             </div>
           </div>
